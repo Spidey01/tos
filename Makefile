@@ -38,4 +38,7 @@ MODULES = busybox
 busybox: setup
 	$(MAKE_MODULE_CMD)
 
+installer: setup $(MODULES)
+	$(MAKE_MODULE_CMD)
+
 .PHONY: clean setup $(MODULES)
