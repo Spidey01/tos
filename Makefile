@@ -27,13 +27,16 @@ setup:
 	mkdir -p tmp
 
 clean:
-	make -C busybox distclean
+	for M in $(MODULES); do $(MAKE) -C "$$M" distclean; done
 	rm -rf tmp
+
+distclean: clean
+	rm -rf dist
 
 
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
-MODULES = busybox
+MODULES = busybox foo bar
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
