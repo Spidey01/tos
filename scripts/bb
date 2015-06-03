@@ -1,0 +1,11 @@
+#!/bin/sh
+
+TOS_SHELL="$(dirname "$0")/dist/bin/busybox"
+
+if [ -x "${TOS_SHELL}" ]; then
+    "$TOS_SHELL" $*
+else
+    echo "NO COMPILED BUSYBOX!" >/dev/stderr
+    exit 127
+fi
+

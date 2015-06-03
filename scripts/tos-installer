@@ -1,0 +1,3 @@
+#!/bin/sh
+
+script -c "sudo \"$(dirname \"$0\")/m\" installer"

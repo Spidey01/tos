@@ -1,0 +1,31 @@
+#!/bin/sh
+
+D="$(dirname "$0")/../dist"
+E="$(dirname "$0")/../tmp/emulated"
+
+if ! mkdir -p "$E" ; then
+    echo "Failed to mkdir -p '$E'."
+    exit 1
+fi
+
+if ! tar -C "$D" -cf - . \
+    | tar -C "$E" -xf -
+then
+    echo "Failed to copy '$D' to '$E'."
+    exit 2
+fi
+
+bind_these="proc sys dev dev/pts dev/shm"
+
+for what in $bind_these
+do
+	mkdir -p "${E}/${what}"
+	sudo mount -o bind "/${what}" "${E}/${what}"
+done
+
+sudo env -i `which chroot` "$E" /bin/busybox sh
+
+for what in $bind_these
+do
+	sudo umount "${E}/${what}"
+done

@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo env -i `which chroot` "$(dirname "$0")/../dist" /bin/busybox sh
