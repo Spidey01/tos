@@ -19,15 +19,14 @@ include config.mk
 O := $(OBJDIR)/busybox
 
 busybox: $(O) $(DISTDIR)/busybox.config
-	make -C $@ "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" install
+	$(MAKE) -C $@ "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" install
 
 $(O):
 	mkdir -p $@
 
-$(O)/.config:
-	make -C busybox "O=$(O)" defconfig
-	sed -e 's/.*FEATURE_PREFER_APPLETS.*/CONFIG_FEATURE_PREFER_APPLETS=y/' -i $@
-	sed -e 's/.*FEATURE_SH_STANDALONE.*/CONFIG_FEATURE_SH_STANDALONE=y/' -i $@
+$(O)/.config: etc/busybox.config
+	cp "$<" "$@"
+	$(MAKE) -C busybox "O=$(O)" oldconfig
 
 $(DISTDIR)/busybox.config: $(OBJDIR)/busybox/.config
 	cp "$<" "$@"
