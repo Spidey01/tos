@@ -14,39 +14,23 @@
 # limitations under the License.
 #
 
-help:
-	@echo "Available targets:"
-	@echo
-	@echo "\tbusybox 	-- compile busybox."
-	@echo "\tlinux   	-- compile linux."
-	@echo "\tclean   	-- clean all the things."
-	@echo "\tdistclean 	-- even more clean."
-	@echo
+include config.mk
 
-setup:
-	-clear
-	mkdir -p dist
-	mkdir -p tmp
+O := $(OBJDIR)/linux
+M := $(MAKE) -C linux "O=$(O)"
 
-clean:
-	for M in $(MODULES); do $(MAKE) -C "$$M" distclean; done
-	rm -rf tmp
+# N.B. tar-pkg doesn't include firmware.
+linux: $(O) $(O)/.config
+	$(M)
+	$(M) tar-pkg
+	tar -C "$(DISTDIR)" -xf $(O)/linux-*.tar
+	$(M) "INSTALL_MOD_PATH=$(DISTDIR)" firmware_install
+	$(M) "INSTALL_HDR_PATH=$(DISTDIR)/usr/" headers_install
 
-distclean: clean
-	rm -rf dist
+$(O):
+	mkdir -p $@
 
+$(O)/.config: etc/linux.config
+	cp -v -- "$<" "$@"
+	$(M) olddefconfig
 
-MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
-
-MODULES = busybox linux
-
-busybox: setup
-	$(MAKE_MODULE_CMD)
-
-linux: setup
-	$(MAKE_MODULE_CMD)
-
-installer: setup $(MODULES)
-	$(MAKE_MODULE_CMD)
-
-.PHONY: clean setup $(MODULES)
