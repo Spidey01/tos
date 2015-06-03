@@ -32,11 +32,6 @@ SIZE := $(shell $(BB) du -sm $(DISTDIR) | cut -f 1)
 # Double it.
 SIZE := $(shell $(BB) expr $(SIZE) \* 2)
 #
-# For right now it's so tiny just hard code 10.
-#
-SIZE := 10
-#
-#
 MNT := "$(OBJDIR)/mnt"
 
 debug:
