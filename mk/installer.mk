@@ -18,8 +18,7 @@ include config.mk
 
 all: image-file
 
-BB := "$(DISTDIR)/bin/busybox"
-NAME := $(shell $(BB) date "+%Y-%m-%dT%H%M%S").img
+NAME := $(shell date "+%Y-%m-%dT%H%M%S").img
 #
 ## N.B. that Busybox defines:
 #
@@ -28,14 +27,13 @@ NAME := $(shell $(BB) date "+%Y-%m-%dT%H%M%S").img
 #
 # As far as du -m and dd bs=1M and dd bs=1MB is concerned.
 #
-SIZE := $(shell $(BB) du -sm $(DISTDIR) | cut -f 1)
+SIZE := $(shell du -sm $(DISTDIR) | cut -f 1)
 # Double it.
-SIZE := $(shell $(BB) expr $(SIZE) \* 2)
+SIZE := $(shell expr $(SIZE) \* 2)
 #
 MNT := "$(OBJDIR)/mnt"
 
 debug:
-	@echo "Using Busybox from '$(BB)'."
 	@echo "Image name is '$(NAME)'."
 	@echo "Size required is '$(SIZE)' MiB."
 
@@ -49,11 +47,11 @@ $(NAME):
 ifneq ($(shell id -u),0)
 	$(error target '$@' must be run as root!)
 endif
-	$(BB) dd if=/dev/zero "of=$@" "count=$(SIZE)" bs=1M
-	$(BB) mkfs.ext2 -F -L "TOS" "$@"
-	$(BB) mkdir -p $(MNT)
-	$(BB) mount -o loop,rw "$@" $(MNT)
+	dd if=/dev/zero "of=$@" "count=$(SIZE)" bs=1M
+	mkfs.ext2 -F -L "TOS" "$@"
+	mkdir -p $(MNT)
+	mount -o loop,rw "$@" $(MNT)
 	$(warning best would be an error handler to umount)
-	-$(BB) tar -C dist -f - -c . | $(BB) tar -C $(MNT) -f - -x
-	$(BB) umount $(MNT)
+	-tar -C dist -f - -c . | tar -C $(MNT) -f - -x
+	umount $(MNT)
 
