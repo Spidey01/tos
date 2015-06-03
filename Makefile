@@ -36,7 +36,7 @@ distclean: clean
 
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
-MODULES = busybox foo bar
+MODULES = busybox
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
