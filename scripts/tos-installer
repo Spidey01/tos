@@ -1,3 +1,3 @@
 #!/bin/sh
 
-script -c "sudo \"$(dirname \"$0\")/m\" installer"
+script -c "sudo make -I mk -f mk/installer.mk installer" tmp/installer.typescript
