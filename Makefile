@@ -18,6 +18,7 @@ help:
 	@echo "Available targets:"
 	@echo
 	@echo "\tbusybox 	-- compile busybox."
+	@echo "\tetc        -- prepare /etc."
 	@echo "\tlinux   	-- compile linux."
 	@echo "\tclean   	-- clean all the things."
 	@echo "\tdistclean 	-- even more clean."
@@ -38,9 +39,12 @@ distclean: clean
 
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
-MODULES = busybox linux
+MODULES = busybox etc linux
 
 busybox: setup
+	$(MAKE_MODULE_CMD)
+
+etc: setup
 	$(MAKE_MODULE_CMD)
 
 linux: setup
