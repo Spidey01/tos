@@ -1,0 +1,72 @@
+# /etc/inittab: busybox init configuration.
+#
+# inittab format is this:
+#
+#   id:runlevels:action:process
+# 
+# id is used by busybox to specify the controlling tty to run the process
+# on. So if id is 'tty2' process will run on /dev/tty2. If no id is given then
+# init's stdin/stdout are used.
+#
+# runlevels are completely ignored by busybox init and that is fine by Terry.
+#
+# action is one of:
+#
+#   - sysinit
+#     + First thing to run on boot.
+#     + init waits for these to finish.
+#   - once
+#     + One time action.
+#     + Asynchronously fired and forgotten.
+#   - restart
+#     + When init needs to be restarted.
+#   - ctrlaltdel
+#     + When someone hits Control+Alt+Delete on the system console.
+#   - shutdown
+#     + Actions halt or reboot the system.
+#   - respawn
+#     + Do again once process exits.
+#     + Warning: Busybox init does not have tty on fire protection.
+#     + By that I mean it won't say this thing exited to fast, delay!
+#     + Don't use with a paper fed teletypewriter!
+#   - askfirst
+#     + "Please press Enter to active this console."
+#
+# Unknown actions and bad inittab entries are just error messages.
+# Error safety FTW!
+#
+# process is the command line to run. Make it count.
+#
+
+#
+## Default TOS initialization.
+#
+::sysinit:/etc/rc/startup
+::sysinit:/etc/rc.local/startup
+::shutdown:/etc/rc/shutdown
+::sysinit:/etc/rc.local/shutdown
+::restart:/sbin/init
+
+#
+## CTRL+ALT+DEL rebooty-tooty
+#
+::ctrlaltdel:/sbin/reboot
+
+#
+## Setup the core TTYs.
+#
+tty1::respawn:-/bin/sh
+tty2::askfirst:-/bin/sh
+tty3::askfirst:-/bin/sh
+
+#
+## Uncomment these to enable more ttys.
+#
+## tty5, tty7, and tty8 are popular choices for running X.
+#
+# tty4::askfirst:/bin/sh
+# tty5::askfirst:/bin/sh
+# tty6::askfirst:/bin/sh
+# tty7::askfirst:/bin/sh
+# tty8::askfirst:/bin/sh
+

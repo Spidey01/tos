@@ -32,8 +32,23 @@ $(DISTDIR)/etc/busybox.config: etc/busybox.config
 	$(CHMOD)
 	$(CHOWN)
 
+$(DISTDIR)/etc/inittab: etc/inittab
+	 $(CP)
+	 $(CHOWN)
+	 $(CHMOD)
+
 $(DISTDIR)/etc/linux.config: etc/linux.config
 	 $(CP)
 	 $(CHOWN)
 	 $(CHMOD)
+
+$(DISTDIR)/etc/rc: etc/rc
+	 $(CP)
+	 $(CHOWN)
+	 chmod -R 0744 "$@"
+
+$(DISTDIR)/etc/rc.local: etc/rc.local
+	 $(CP)
+	 $(CHOWN)
+	 chmod -R 0744 "$@"
 

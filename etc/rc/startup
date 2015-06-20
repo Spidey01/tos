@@ -1,0 +1,59 @@
+#!/bin/busybox sh
+# vim: set filetype=sh :
+#-
+# Copyright 2015 Terry Mathew Poulin <BigBoss1964@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+## Startup the system.
+#
+
+
+#
+## Setup Linux special file systems. Independant of /etc/fstab.
+#
+
+# /dev and relations
+
+[ -d /dev/pts ] || mkdir /dev/pts
+mount -t devpts -o rw,nosuid,noexec,gid=5,mode=620,ptmxmode=000 none /dev/pts
+# Does glibc still need this for shm_*() functions? Linux's SYSV SHM interface does not need it.
+# mount -t tmpfs /dev/shm -o rw,nosuid,nodev none /dev/shm
+
+
+# /proc and relations
+# TODO: do we want -o hidepid=2? See linux/Documentation/proc.txt. Also gid=... ?
+
+[ -d /proc ] || mkdir /proc
+mount -t proc -o noexec,nosuid,nodev  none /proc
+
+# /sys and relations.
+
+[ -d /sys ] || mkdir /sys
+mount -t sysfs -o noexec,nosuid,nodev  none /sys
+[ -d /sys/fs/pstore ] && mount -t pstore /sys/fs/pstore
+[ -d /sys/kernel/config ] && mount -t configfs none /sys/kernel/config
+# TODO: test on a UEFI system.
+# mount -t efivarfs none /sys/firmware/efi/efivars
+
+## TODO: Do we want to setup a tmpfs on /run->/var/run?
+
+# local file systems.
+
+if [ -f /etc/fstab ]; then
+    swapon -a
+    mount -a
+fi
+
