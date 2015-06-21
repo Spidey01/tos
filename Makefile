@@ -20,6 +20,7 @@ help:
 	@echo "\tbusybox    -- compile busybox."
 	@echo "\tetc        -- prepare /etc."
 	@echo "\tlinux      -- compile linux."
+	@echo "\tminimum    -- $(MINIMUM_MODULES)."
 	@echo "\tclean      -- clean all the things."
 	@echo "\tdistclean  -- even more clean."
 	@echo
@@ -39,7 +40,8 @@ distclean: clean
 
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
-MODULES = busybox etc linux
+MINIMUM_MODULES = busybox etc linux
+MODULES = $(MINIMUM_MODULES)
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -49,6 +51,9 @@ etc: setup
 
 linux: setup
 	$(MAKE_MODULE_CMD)
+
+minimum: 
+	@echo "Minimum TOS build completed."
 
 installer: setup $(MODULES)
 	$(MAKE_MODULE_CMD)
