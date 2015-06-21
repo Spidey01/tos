@@ -17,11 +17,11 @@
 help:
 	@echo "Available targets:"
 	@echo
-	@echo "\tbusybox 	-- compile busybox."
+	@echo "\tbusybox    -- compile busybox."
 	@echo "\tetc        -- prepare /etc."
-	@echo "\tlinux   	-- compile linux."
-	@echo "\tclean   	-- clean all the things."
-	@echo "\tdistclean 	-- even more clean."
+	@echo "\tlinux      -- compile linux."
+	@echo "\tclean      -- clean all the things."
+	@echo "\tdistclean  -- even more clean."
 	@echo
 
 setup:
