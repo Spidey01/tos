@@ -41,7 +41,7 @@ distclean: clean
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
 MINIMUM_MODULES = busybox etc linux
-MODULES = $(MINIMUM_MODULES)
+MODULES = $(MINIMUM_MODULES) glibc
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -52,7 +52,10 @@ etc: setup
 linux: setup
 	$(MAKE_MODULE_CMD)
 
-minimum: 
+glibc: setup linux
+	$(MAKE_MODULE_CMD)
+
+minimum: $(MINIMUM_MODULES)
 	@echo "Minimum TOS build completed."
 
 installer: setup $(MODULES)
