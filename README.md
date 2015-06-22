@@ -30,3 +30,15 @@ Build Flavors
 
 Run make help or read the Makefile for full details.
 
+Installing TOS
+--------------
+
+Still working on it. Here is what I envison:
+
+  - Boot off install media containing 'recovery' partition.
+  - Run interactive installer to write out recovery script.
+  - Execute recovery script to runs mbr-install or gpt-install.
+  - Create partitions, install files, and setup bootloader.
+  - Include recovery script on installed recovery partition.
+
+I expect that syslinux will be used for x86 with either legacy BIOS or modern UEFI booting.
