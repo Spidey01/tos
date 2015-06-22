@@ -21,6 +21,7 @@ help:
 	@echo "\tetc        -- prepare /etc."
 	@echo "\tlinux      -- compile linux."
 	@echo "\tglibc      -- compile GNU C library."
+	@echo "\te2fsprogs  -- compile e2fsprogs."
 	@echo "\tminimum    -- $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- $(MODULES)."
 	@echo "\tclean      -- clean all the things."
@@ -43,7 +44,7 @@ distclean: clean
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
 MINIMUM_MODULES = busybox etc linux
-MODULES = $(MINIMUM_MODULES) glibc
+MODULES = $(MINIMUM_MODULES) glibc e2fsprogs
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -55,6 +56,11 @@ linux: setup
 	$(MAKE_MODULE_CMD)
 
 glibc: setup linux
+	$(MAKE_MODULE_CMD)
+
+# TODO:
+# Depends on glibc but we're not able to build against our glibc module yet.
+e2fsprogs: setup
 	$(MAKE_MODULE_CMD)
 
 minimum: $(MINIMUM_MODULES)
