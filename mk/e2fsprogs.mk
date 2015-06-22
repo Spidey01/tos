@@ -30,8 +30,10 @@ e2fsprogs: $(O) $(O)/Makefile
 $(O):
 	mkdir -p $@
 
+# TODO: dont' hard code lib64 like an ass :'(
 $(O)/Makefile: e2fsprogs/configure
 	cd $(O) && ../../e2fsprogs/configure \
 		--prefix=/usr \
+		--libdir=/usr/lib64 \
 		--enable-elf-shlibs
 
