@@ -25,7 +25,7 @@ done
 
 sudo env -i `which chroot` "$E" /bin/busybox sh
 
-for what in $bind_these
+for what in $(echo $bind_these | sed -e 's/\s/\n/g' | tac)
 do
 	sudo umount "${E}/${what}"
 done
