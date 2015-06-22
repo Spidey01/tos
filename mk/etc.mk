@@ -28,17 +28,12 @@ etc: $(DISTDIR)/etc $(foreach efile,$(wildcard etc/*),$(DISTDIR)/$(efile))
 $(DISTDIR)/etc:
 	mkdir -p $@
 
-$(DISTDIR)/etc/busybox.config: etc/busybox.config
+$(DISTDIR)/etc/%.config: etc/%.config
 	$(CP)
 	$(CHMOD_FILE)
 	$(CHOWN)
 
 $(DISTDIR)/etc/inittab: etc/inittab
-	 $(CP)
-	 $(CHOWN)
-	 $(CHMOD_FILE)
-
-$(DISTDIR)/etc/linux.config: etc/linux.config
 	 $(CP)
 	 $(CHOWN)
 	 $(CHMOD_FILE)
