@@ -18,16 +18,13 @@ include config.mk
 
 O := $(OBJDIR)/busybox
 
-busybox: $(O) $(DISTDIR)/busybox.config
+busybox: $(O)/.config
 	$(MAKE) -C $@ "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" install
 
 $(O):
 	mkdir -p $@
 
-$(O)/.config: etc/busybox.config
+$(O)/.config: etc/busybox.config $(O)
 	cp "$<" "$@"
 	$(MAKE) -C busybox "O=$(O)" oldconfig
-
-$(DISTDIR)/busybox.config: $(OBJDIR)/busybox/.config
-	cp "$<" "$@"
 
