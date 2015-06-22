@@ -20,7 +20,9 @@ help:
 	@echo "\tbusybox    -- compile busybox."
 	@echo "\tetc        -- prepare /etc."
 	@echo "\tlinux      -- compile linux."
+	@echo "\tglibc      -- compile GNU C library."
 	@echo "\tminimum    -- $(MINIMUM_MODULES)."
+	@echo "\tcomplete   -- $(MODULES)."
 	@echo "\tclean      -- clean all the things."
 	@echo "\tdistclean  -- even more clean."
 	@echo
@@ -57,6 +59,8 @@ glibc: setup linux
 
 minimum: $(MINIMUM_MODULES)
 	@echo "Minimum TOS build completed."
+
+complete: $(MODULES)
 
 installer: setup $(MODULES)
 	$(MAKE_MODULE_CMD)
