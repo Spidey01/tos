@@ -35,5 +35,6 @@ $(O)/Makefile: e2fsprogs/configure
 	cd $(O) && ../../e2fsprogs/configure \
 		--prefix=/usr \
 		--libdir=/usr/lib64 \
+		--sysconfdir=/etc \
 		--enable-elf-shlibs
 
