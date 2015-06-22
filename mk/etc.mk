@@ -55,10 +55,12 @@ $(DISTDIR)/etc/ld.so.conf.d: etc/ld.so.conf.d
 $(DISTDIR)/etc/rc: etc/rc
 	 $(CP)
 	 $(CHOWN)
-	 chmod -R 0744 "$@"
+	 chmod 0755 "$@"
+	 chmod 0744 "$@"/*
 
 $(DISTDIR)/etc/rc.local: etc/rc.local
 	 $(CP)
 	 $(CHOWN)
-	 chmod -R 0744 "$@"
+	 chmod 0755 "$@"
+	 chmod 0744 "$@"/*
 
