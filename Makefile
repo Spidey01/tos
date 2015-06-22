@@ -31,6 +31,7 @@ help:
 setup:
 	-clear
 	mkdir -p dist
+	mkdir -p dist/dev
 	mkdir -p tmp
 
 clean:
