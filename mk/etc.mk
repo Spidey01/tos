@@ -17,7 +17,8 @@
 include config.mk
 
 CP = cp -Rv "$<" "$@" 
-CHMOD =	chmod 0644 "$@"
+CHMOD_FILE = chmod 0644 "$@"
+CHMOD_DIR = chmod 0755 "$@"
 # Should we embed sudo here or what?
 CHOWN = @echo TODO: chown root.root "$<"
 
@@ -29,38 +30,38 @@ $(DISTDIR)/etc:
 
 $(DISTDIR)/etc/busybox.config: etc/busybox.config
 	$(CP)
-	$(CHMOD)
+	$(CHMOD_FILE)
 	$(CHOWN)
 
 $(DISTDIR)/etc/inittab: etc/inittab
 	 $(CP)
 	 $(CHOWN)
-	 $(CHMOD)
+	 $(CHMOD_FILE)
 
 $(DISTDIR)/etc/linux.config: etc/linux.config
 	 $(CP)
 	 $(CHOWN)
-	 $(CHMOD)
+	 $(CHMOD_FILE)
 
 $(DISTDIR)/etc/ld.so.conf: etc/ld.so.conf
 	$(CP)
 	$(CHOWN)
-	$(CHMOD)
+	$(CHMOD_FILE)
 
 $(DISTDIR)/etc/ld.so.conf.d: etc/ld.so.conf.d
 	$(CP)
 	$(CHOWN)
-	chmod 0755 "$@"
+	$(CHMOD_DIR)
 
 $(DISTDIR)/etc/rc: etc/rc
 	 $(CP)
 	 $(CHOWN)
-	 chmod 0755 "$@"
+	$(CHMOD_DIR)
 	 chmod 0744 "$@"/*
 
 $(DISTDIR)/etc/rc.local: etc/rc.local
 	 $(CP)
 	 $(CHOWN)
-	 chmod 0755 "$@"
+	$(CHMOD_DIR)
 	 chmod 0744 "$@"/*
 
