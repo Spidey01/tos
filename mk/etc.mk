@@ -50,7 +50,7 @@ $(DISTDIR)/etc/ld.so.conf: etc/ld.so.conf
 $(DISTDIR)/etc/ld.so.conf.d: etc/ld.so.conf.d
 	$(CP)
 	$(CHOWN)
-	$(CHMOD)
+	chmod 0755 "$@"
 
 $(DISTDIR)/etc/rc: etc/rc
 	 $(CP)
