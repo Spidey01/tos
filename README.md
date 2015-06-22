@@ -16,6 +16,17 @@ Because in all the time since ~1976, we have yet to create anything significantl
 
 Because GNU Make is the most dominate form of Make in the known universe at this time, that is what I expect will be used.
 
+Additional tools like GNU AWK may be required to build some modules until the build system is proper, e.g. more like a cross compile instead of leach off the host machine for them. When a configure script fails it should let you know.
 
-TODO: FINISH ME
+There are several build flavors and each module may be built by name. See `make help' for further details.
+
+Build Flavors
+-------------
+
+  - minimum
+    + The bare essentials. Basically linux + busybox.
+  - complete
+    + Build *ALL* the things!
+
+Run make help or read the Makefile for full details.
 
