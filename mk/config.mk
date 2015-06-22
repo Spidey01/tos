@@ -9,3 +9,8 @@ OBJDIR := $(CURDIR)/tmp
 #
 DISTDIR := $(CURDIR)/dist
 
+#
+## Location to find build configurations.
+#
+CONFIGDIR := $(CURDIR)/etc
+

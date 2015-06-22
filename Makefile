@@ -56,6 +56,12 @@ etc: setup
 linux: setup
 	$(MAKE_MODULE_CMD)
 
+# Targets to work with the linux configuration.
+linux-menuconfig:
+	$(MAKE) -I mk -f mk/linux.mk $@
+linux-olddefconfig:
+	$(MAKE) -I mk -f mk/linux.mk $@
+
 glibc: setup linux
 	$(MAKE_MODULE_CMD)
 
@@ -72,4 +78,4 @@ complete: $(MODULES)
 installer: setup $(MODULES)
 	$(MAKE_MODULE_CMD)
 
-.PHONY: clean setup $(MODULES)
+.PHONY: clean setup linux-menuconfig $(MODULES)

@@ -18,6 +18,7 @@ include config.mk
 
 O := $(OBJDIR)/linux
 M := $(MAKE) -C linux "O=$(O)"
+LINUX_CONFIG := $(CONFIGDIR)/linux.config
 
 # N.B. tar-pkg doesn't include firmware.
 linux: $(O) $(O)/.config
@@ -30,7 +31,15 @@ linux: $(O) $(O)/.config
 $(O):
 	mkdir -p $@
 
-$(O)/.config: etc/linux.config
+$(O)/.config: $(LINUX_CONFIG)
 	cp -v -- "$<" "$@"
 	$(M) olddefconfig
 
+linux-menuconfig: $(O)/.config
+	$(M) menuconfig
+	cp -v -- "$<" $(LINUX_CONFIG)
+
+linux-olddefconfig: $(O)/.config
+	cp -v -- "$<" $(LINUX_CONFIG)
+
+.PHONY: linux-olddefconfig
