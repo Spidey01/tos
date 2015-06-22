@@ -1,0 +1,2 @@
+Place your ld.so.conf customizations this directory as a .conf file.
+/etc/ld.so.conf will source all *.conf files here.

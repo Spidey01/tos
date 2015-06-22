@@ -42,6 +42,16 @@ $(DISTDIR)/etc/linux.config: etc/linux.config
 	 $(CHOWN)
 	 $(CHMOD)
 
+$(DISTDIR)/etc/ld.so.conf: etc/ld.so.conf
+	$(CP)
+	$(CHOWN)
+	$(CHMOD)
+
+$(DISTDIR)/etc/ld.so.conf.d: etc/ld.so.conf.d
+	$(CP)
+	$(CHOWN)
+	$(CHMOD)
+
 $(DISTDIR)/etc/rc: etc/rc
 	 $(CP)
 	 $(CHOWN)
