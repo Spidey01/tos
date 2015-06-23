@@ -23,6 +23,7 @@ help:
 	@echo "\tglibc      -- compile GNU C library."
 	@echo "\te2fsprogs  -- compile e2fsprogs."
 	@echo "\tfile       -- compile file utility."
+	@echo "\tzlib       -- compile zlib library."
 	@echo "\tminimum    -- $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- $(MODULES)."
 	@echo "\tclean      -- clean all the things."
@@ -70,9 +71,9 @@ glibc: setup linux
 # Depends on glibc but we're not able to build against our glibc module yet.
 e2fsprogs: setup
 	$(MAKE_MODULE_CMD)
-
-# depends on glibc and zlib but we can't build against our glibc yet and have
-# no zlib yet.
+zlib: setup
+	$(MAKE_MODULE_CMD)
+# also depends on zlib but we can't build against our glibc & zlib yet.
 file: setup
 	$(MAKE_MODULE_CMD)
 
