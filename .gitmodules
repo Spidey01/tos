@@ -10,3 +10,6 @@
 [submodule "e2fsprogs"]
 	path = e2fsprogs
 	url = git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
+[submodule "file"]
+	path = file
+	url = https://github.com/file/file.git
