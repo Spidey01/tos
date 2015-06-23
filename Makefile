@@ -47,7 +47,7 @@ distclean: clean
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
 MINIMUM_MODULES = busybox etc linux
-MODULES = $(MINIMUM_MODULES) glibc e2fsprogs file
+MODULES = $(MINIMUM_MODULES) glibc e2fsprogs zlib file
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
