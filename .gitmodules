@@ -13,3 +13,6 @@
 [submodule "file"]
 	path = file
 	url = https://github.com/file/file.git
+[submodule "zlib"]
+	path = zlib
+	url = https://github.com/madler/zlib.git
