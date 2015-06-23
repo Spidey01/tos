@@ -52,6 +52,11 @@ MODULES = $(MINIMUM_MODULES) glibc e2fsprogs zlib file
 busybox: setup
 	$(MAKE_MODULE_CMD)
 
+busybox-menuconfig:
+	$(MAKE) -I mk -f mk/busybox.mk $@
+busybox-olddefconfig:
+	$(MAKE) -I mk -f mk/busybox.mk $@
+
 etc: setup
 	$(MAKE_MODULE_CMD)
 

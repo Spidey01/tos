@@ -17,6 +17,7 @@
 include config.mk
 
 O := $(OBJDIR)/busybox
+BB_CONFIG := $(CONFIGDIR)/busybox.config
 
 busybox: $(O)/.config
 	$(MAKE) -C $@ "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" install
@@ -24,7 +25,15 @@ busybox: $(O)/.config
 $(O):
 	mkdir -p $@
 
-$(O)/.config: etc/busybox.config $(O)
+$(O)/.config: $(BB_CONFIG) $(O)
 	cp "$<" "$@"
 	$(MAKE) -C busybox "O=$(O)" oldconfig
 
+busybox-menuconfig: $(O)/.config
+	$(MAKE) -C busybox "O=$(O)" menuconfig
+	cp -v -- "$<" $(BB_CONFIG)
+
+busybox-olddefconfig: $(O)/.config
+	cp -v -- "$<" $(BB_CONFIG)
+
+.PHONY: busybox-olddefconfig
