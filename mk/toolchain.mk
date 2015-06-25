@@ -45,25 +45,31 @@ $(O):
 binutils: $(binutils_outfile)
 	$(COMPLETED_MSG)
 
-$(binutils_outfile): $(binutils_objdir) 
-	cd $(binutils_objdir) && $(binutils_srcdir)/configure \
-		--prefix="$(TOOLSDIR)" \
-		--with-sysroot="$(DISTDIR)" \
-		--with-lib-path="$(TOOLSDIR)/lib" \
-		--target="$(TARGET)" \
-		--disable-nls --disable-werror
+$(binutils_outfile): $(binutils_objdir) $(binutils_objdir)/Makefile
 	$(MAKE) -C "$(binutils_objdir)"
 	$(MAKE) -C "$(binutils_objdir)" install
 
 $(binutils_objdir):
 	mkdir -p "$@"
 
+$(binutils_objdir)/Makefile: $(binutils_srcdir)/configure
+	cd $(binutils_objdir) && $(binutils_srcdir)/configure \
+		--prefix="$(TOOLSDIR)" \
+		--with-sysroot="$(DISTDIR)" \
+		--with-lib-path="$(TOOLSDIR)/lib" \
+		--target="$(TARGET)" \
+		--disable-nls --disable-werror
+
 gcc: $(gcc_outfile)
 	$(COMPLETED_MSG)
 	@printf "\nDoing git clean -f in $@ to clean up build stuff.\n"
 	rm -rf gcc/{gmp,mpfr,mpc}
 
-$(gcc_outfile): gcc-setup
+$(gcc_outfile): gcc-setup $(gcc_objdir)/Makefile
+	$(MAKE) -C "$(gcc_objdir)"
+	$(MAKE) -C "$(gcc_objdir)" install
+
+$(gcc_objdir)/Makefile: $(gcc_srcdir)/configure
 	cd $(gcc_objdir) && $(gcc_srcdir)/configure \
 		--target="$(TARGET)" \
 		--prefix="$(TOOLSDIR)" \
@@ -85,8 +91,6 @@ $(gcc_outfile): gcc-setup
 		--disable-libvtv \
 		--disable-libstdcxx \
 		--enable-languages=c,c++
-	$(MAKE) -C "$(gcc_objdir)"
-	$(MAKE) -C "$(gcc_objdir)" install
 
 #
 ## GCC is kind of a pickle.
