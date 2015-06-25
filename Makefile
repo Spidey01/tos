@@ -17,6 +17,7 @@
 help:
 	@echo "Available targets:"
 	@echo
+	@echo "Module:"
 	@echo "\tbusybox    -- compile busybox."
 	@echo "\tetc        -- prepare /etc."
 	@echo "\tlinux      -- compile linux."
@@ -24,9 +25,14 @@ help:
 	@echo "\te2fsprogs  -- compile e2fsprogs."
 	@echo "\tfile       -- compile file utility."
 	@echo "\tzlib       -- compile zlib library."
+	@echo
+	@echo "Special targets:"
+	@echo
+	@echo "\toolchain   -- compile cross toolchain."
 	@echo "\tminimum    -- $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- $(MODULES)."
 	@echo "\tclean      -- clean all the things."
+	@echo "\ttoolclean  -- remove toolchain."
 	@echo "\tdistclean  -- even more clean."
 	@echo
 
@@ -40,7 +46,11 @@ clean:
 	for M in $(MODULES); do $(MAKE) -C "$$M" distclean; done
 	rm -rf tmp
 
-distclean: clean
+toolclean:
+	rm -rf toolchain
+	rm -rf tmp/toolchain
+
+distclean: clean toolcean
 	rm -rf dist
 
 
@@ -48,6 +58,7 @@ MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
 MINIMUM_MODULES = busybox etc linux
 MODULES = $(MINIMUM_MODULES) glibc e2fsprogs zlib file
+
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -80,6 +91,9 @@ zlib: setup
 	$(MAKE_MODULE_CMD)
 # also depends on zlib but we can't build against our glibc & zlib yet.
 file: setup
+	$(MAKE_MODULE_CMD)
+
+toolchain: setup
 	$(MAKE_MODULE_CMD)
 
 minimum: $(MINIMUM_MODULES)

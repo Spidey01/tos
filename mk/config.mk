@@ -14,3 +14,8 @@ DISTDIR := $(CURDIR)/dist
 #
 CONFIGDIR := $(CURDIR)/etc
 
+#
+## Base directory to store the toolchain.
+#
+TOOLSDIR := $(CURDIR)/toolchain
+
