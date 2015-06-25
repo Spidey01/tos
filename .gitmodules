@@ -19,3 +19,6 @@
 [submodule "binutils"]
 	path = binutils
 	url = git://sourceware.org/git/binutils-gdb.git
+[submodule "gcc"]
+	path = gcc
+	url = git://gcc.gnu.org/git/gcc.git
