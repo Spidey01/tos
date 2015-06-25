@@ -1,4 +1,5 @@
 dist/
 tmp/
+toolchain/
 # vim swap files.
 *.sw?
