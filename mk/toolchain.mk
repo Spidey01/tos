@@ -33,6 +33,9 @@ gcc_mpfrver := 3.1.3
 gcc_mpcver := 1.0.3
 gcc_outfile := $(TOOLSDIR)/bin/$(TARGET)-gcc
 
+glibc_srcdir := $(CURDIR)/glibc
+glibc_objdir := $(O)/glibc
+glibc_env_args = "PATH=$(TOOLSDIR)/bin:$(PATH)" LD_LIBRARY_PATH=
 
 COMPLETED_MSG = @echo "Completed $@ for target $(TARGET)."
 
@@ -126,4 +129,31 @@ $(O)/mpfr-$(gcc_mpfrver).tar.xz: $(O)
 $(O)/mpc-$(gcc_mpcver).tar.gz: $(O)
 	@echo "Downloading MPFR version $(gcc_mpfrver)."
 	wget -N -P "$(dir $@)" "ftp://ftp.gnu.org/gnu/mpc/$(notdir $@)"
+
+linux-headers:
+	mkdir -p $(O)/linux-headers
+	$(MAKE) -C linux O=$(OBJDIR)/linux "INSTALL_HDR_PATH=$(O)/linux-headers" headers_install
+	cp -r "$(O)/linux-headers/include"/* $(TOOLSDIR)/include/
+
+glibc:  CFLAGS += -fno-stack-protector -U_FORTIFY_SOURCE
+glibc: linux-headers $(glibc_objdir) $(glibc_objdir)/Makefile
+	env $(glibc_env_args) $(MAKE) -C $(glibc_objdir)
+	env $(glibc_env_args) $(MAKE) -C $(glibc_objdir) install
+
+$(glibc_objdir):
+	mkdir -p "$@"
+
+$(glibc_objdir)/Makefile: $(glibc_srcdir)/configure
+	cd $(dir $@) && env $(glibc_env_args) \
+		$(glibc_srcdir)/configure \
+			--prefix="$(TOOLSDIR)" \
+			--host="$(TARGET)" \
+			--build="$(shell $(glibc_srcdir)/scripts/config.guess)" \
+			--enable-kernel=3.0.0 \
+			--disable-profile \
+			--with-headers=$(TOOLSDIR)/include/ \
+			libc_cv_forced_unwind=yes \
+			libc_cv_ctors_header=yes \
+			libc_cv_c_cleanup=yes
+
 
