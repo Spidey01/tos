@@ -1,0 +1,128 @@
+# vim: set filetype=sh :
+
+
+say() {
+    local line
+    echo
+    for line; do
+    echo "$line"
+    done
+    echo
+}
+
+
+die() {
+    local es opt
+
+    es=1
+
+    while getopts "e:" opt; do
+        case $opt in
+            e)
+                es=$OPTARG
+                ;;
+            \?)
+                echo "die}(): Invalid option: -$OPTARG" 1>&2
+                return $OPTERR
+                ;;
+        esac
+    done
+    shift `expr $OPTIND - 1`
+
+    echo "Fatal error: $*"
+    read -p "Press enter key to exit." REPLY
+    exit $es
+}
+
+
+ls_devices() {
+    echo
+    echo "Available devices: "
+    echo
+    ls /dev/sd? /dev/hd? 2>/dev/null
+    echo
+}
+
+
+get_memory() {
+    free "$*" | grep Mem: | awk '{print $2}'
+}
+
+
+get_part_number() {
+    echo "$1" | sed -e "s%/dev/[^0-9]*%%"
+}
+
+
+do_mount() {
+    if ! mount "$1" /mnt; then
+        die "Failed mounting $2 device."
+    fi
+}
+
+
+do_umount() {
+    if ! umount /mnt; then
+        die "Failed unmounting $2 device."
+    fi
+}
+
+
+install_image() {
+    local device image
+
+    device="$1"
+    image="$2"
+
+    do_mount "$device" "$image"
+
+    echo "TODO: untar $image image"
+        echo "Pausing so you can extract system files on /mnt."
+        read -p "Press enter to continue." REPLY
+
+    do_umount "$device" "$image"
+}
+
+
+install_mbr() {
+    case "$1" in
+        gptmbr)
+            say "Writing GPT protective MBR with UEFI-CSM support."
+            ;;
+        mbr)
+            say "Writing MS-DOS style legacy Master Boot Record."
+            ;;
+        *)
+            say "Writing MBR from syslinux ${1}.bin"
+            ;;
+    esac
+    dd bs=440 count=1 conv=notrunc "if=/syslinux/bios/mbr/${1}.bin" "of=${2}"
+}
+
+
+install_efiboot() {
+    local dir
+
+
+    say "Installing syslinux UEFI boot software"
+
+    do_mount "$1" ESP
+    dir=/mnt/EFI/BOOT
+    mkdir -p $dir
+    case "$2" in
+        x86_64)
+            cp -v /syslinux/efi64/efi/syslinux.efi "${dir}/BOOTX64.EFI"
+            cp -v /syslinux/efi64/com32/elflink/ldlinux/ldlinux.e64 "${dir}/"
+            ;;
+        i*86)
+            cp -v /syslinux/efi32/efi/syslinux.efi "${dir}/BOOTIA32.EFI"
+            cp -v /syslinux/efi32/com32/elflink/ldlinux/ldlinux.e32 "${dir}/"
+            ;;
+        *)
+            echo "unsupported architecture: $2"
+            ;;
+    esac
+    do_umount "$1" ESP
+}
+
+
