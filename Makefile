@@ -17,15 +17,25 @@
 help:
 	@echo "Available targets:"
 	@echo
-	@echo "\tbusybox    -- compile busybox."
-	@echo "\tetc        -- prepare /etc."
-	@echo "\tlinux      -- compile linux."
-	@echo "\tglibc      -- compile GNU C library."
-	@echo "\te2fsprogs  -- compile e2fsprogs."
-	@echo "\tfile       -- compile file utility."
-	@echo "\tzlib       -- compile zlib library."
-	@echo "\tminimum    -- $(MINIMUM_MODULES)."
-	@echo "\tcomplete   -- $(MODULES)."
+	@echo "Module:"
+	@echo
+	@echo "\tbusybox                -- compile busybox."
+	@echo "\tbusybox-menuconfig     -- edit etc/busybox.config."
+	@echo "\tbusybox-olddefconfig   -- update etc/busybox.config."
+	@echo "\tetc                    -- prepare /etc."
+	@echo "\tlinux                  -- compile linux."
+	@echo "\tlinux-menuconfig       -- edit etc/linux.config."
+	@echo "\tlinux-olddefconfig     -- update etc/linux.config."
+	@echo "\tglibc                  -- compile GNU C library."
+	@echo "\te2fsprogs              -- compile e2fsprogs."
+	@echo "\tfile                   -- compile file utility."
+	@echo "\tzlib                   -- compile zlib library."
+	@echo
+	@echo "Special targets:"
+	@echo
+	@echo "\trecovery   -- tape recovery image."
+	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
+	@echo "\tcomplete   -- make $(MODULES)."
 	@echo "\tclean      -- clean all the things."
 	@echo "\tdistclean  -- even more clean."
 	@echo
