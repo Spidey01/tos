@@ -38,6 +38,7 @@ help:
 	@echo
 	@echo "\tboot       -- tape boot image."
 	@echo "\trecovery   -- tape recovery image."
+	@echo "\troot       -- tape root image."
 	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- make $(MODULES)."
 	@echo "\tclean      -- clean all the things."
@@ -106,6 +107,7 @@ minimum: $(MINIMUM_MODULES)
 	@echo "Minimum TOS build completed."
 
 complete: $(MODULES)
+	@echo "Complete TOS build completed."
 
 installer: setup $(MODULES)
 	$(MAKE_MODULE_CMD)
@@ -115,5 +117,9 @@ boot: linux
 
 recovery: setup
 	$(MAKE_MODULE_CMD)
+
+root: root.txz
+root.txz:
+	tar -C dist --exclude ./recovery --exclude ./boot -cJvf "$@" .
 
 .PHONY: clean setup linux-menuconfig $(MODULES)
