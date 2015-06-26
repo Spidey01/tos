@@ -256,7 +256,7 @@ LABEL RECOVERY
     LINUX /vmlinuz
     APPEND rootwait root=${recovery} rw quiet
 
-SAY TOS = The Other System from {$root}.
+SAY TOS      = The Other System from ${root}.
 SAY RECOVERY = Reinstall from recovery partition from ${recovery}.
 DEFAULT TOS
 PROMPT 1
