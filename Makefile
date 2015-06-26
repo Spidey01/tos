@@ -90,4 +90,7 @@ complete: $(MODULES)
 installer: setup $(MODULES)
 	$(MAKE_MODULE_CMD)
 
+recovery: setup
+	$(MAKE_MODULE_CMD)
+
 .PHONY: clean setup linux-menuconfig $(MODULES)
