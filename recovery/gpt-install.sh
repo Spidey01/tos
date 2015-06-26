@@ -92,7 +92,7 @@ cat << EOF > /mnt/etc/fstab
 # (U)EFI System Partition (ESP)
 $esp_device /boot vfat defaults 0 1
 # Recovery Partition
-$esp_device /recovery ext2 defaults 0 2
+$recovery_device /recovery ext2 defaults 0 2
 # / Partition
 $root_device / ext4 defaults 0 3
 EOF
