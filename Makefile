@@ -36,6 +36,7 @@ help:
 	@echo
 	@echo "Special targets:"
 	@echo
+	@echo "\tboot       -- tape boot image."
 	@echo "\trecovery   -- tape recovery image."
 	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- make $(MODULES)."
@@ -107,6 +108,9 @@ minimum: $(MINIMUM_MODULES)
 complete: $(MODULES)
 
 installer: setup $(MODULES)
+	$(MAKE_MODULE_CMD)
+
+boot: linux
 	$(MAKE_MODULE_CMD)
 
 recovery: setup
