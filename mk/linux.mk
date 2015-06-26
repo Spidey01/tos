@@ -19,14 +19,19 @@ include config.mk
 O := $(OBJDIR)/linux
 M := $(MAKE) -C linux "O=$(O)"
 LINUX_CONFIG := $(CONFIGDIR)/linux.config
+header_to_taste = $(DISTDIR)/usr/include/linux/version.h
 
 # N.B. tar-pkg doesn't include firmware.
-linux: $(O) $(O)/.config
+linux: INSTALL_HDR_PATH = $(DISTDIR)/usr/
+linux: INSTALL_MOD_PATH = $(DISTDIR)
+linux: INSTALL_FW_PATH = $(DISTDIR)/lib/firmware
+linux: $(DISTDIR)/boot/vmlinuz
+
+$(DISTDIR)/boot/vmlinuz: $(O) $(O)/.config $(header_to_taste) $(DISTDIR)/lib/firmware
 	$(M)
 	$(M) tar-pkg
 	tar -C "$(DISTDIR)" -xf $(O)/linux-*.tar
-	$(M) "INSTALL_MOD_PATH=$(DISTDIR)" firmware_install
-	$(M) "INSTALL_HDR_PATH=$(DISTDIR)/usr/" headers_install
+	cp -iv $@-* "$@"
 
 $(O):
 	mkdir -p $@
@@ -35,11 +40,25 @@ $(O)/.config: $(LINUX_CONFIG)
 	cp -v -- "$<" "$@"
 	$(M) olddefconfig
 
+$(header_to_taste): linux-headers_install
+
+$(DISTDIR)/lib/firmware: linux-firmware_install
+
+linux-firmware_install:
+	$(M) "INSTALL_FW_PATH=$(INSTALL_FW_PATH)" firmware_install
+
+linux-headers_install:
+	$(M) "INSTALL_HDR_PATH=$(INSTALL_HDR_PATH)" headers_install
+
+linux-help:
+	$(M) help
+
 linux-menuconfig: $(O)/.config
 	$(M) menuconfig
 	cp -v -- "$<" $(LINUX_CONFIG)
 
 linux-olddefconfig: $(O)/.config
 	cp -v -- "$<" $(LINUX_CONFIG)
+
 
 .PHONY: linux-olddefconfig

@@ -24,6 +24,9 @@ help:
 	@echo "\tbusybox-olddefconfig   -- update etc/busybox.config."
 	@echo "\tetc                    -- prepare /etc."
 	@echo "\tlinux                  -- compile linux."
+	@echo "\tlinux-firmware_install -- see linux-help -> firmware_headers."
+	@echo "\tlinux-headers_install  -- see linux-help -> headers_install."
+	@echo "\tlinux-help             -- run make help for linux."
 	@echo "\tlinux-menuconfig       -- edit etc/linux.config."
 	@echo "\tlinux-olddefconfig     -- update etc/linux.config."
 	@echo "\tglibc                  -- compile GNU C library."
@@ -73,6 +76,12 @@ etc: setup
 linux: setup
 	$(MAKE_MODULE_CMD)
 
+linux-firmware_install:
+	$(MAKE) $(MAKEFLAGS) -I mk -f mk/linux.mk $@
+linux-headers_install:
+	$(MAKE) $(MAKEFLAGS) -I mk -f mk/linux.mk $@
+linux-help:
+	$(MAKE) -I mk -f mk/linux.mk $@
 # Targets to work with the linux configuration.
 linux-menuconfig:
 	$(MAKE) -I mk -f mk/linux.mk $@
