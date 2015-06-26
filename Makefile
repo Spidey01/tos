@@ -88,7 +88,7 @@ linux-menuconfig:
 linux-olddefconfig:
 	$(MAKE) -I mk -f mk/linux.mk $@
 
-glibc: setup linux
+glibc: setup linux-headers_install
 	$(MAKE_MODULE_CMD)
 
 # TODO:
