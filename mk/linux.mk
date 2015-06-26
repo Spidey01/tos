@@ -21,12 +21,16 @@ M := $(MAKE) -C linux "O=$(O)"
 LINUX_CONFIG := $(CONFIGDIR)/linux.config
 header_to_taste = $(DISTDIR)/usr/include/linux/version.h
 
-# N.B. tar-pkg doesn't include firmware.
-linux: INSTALL_HDR_PATH = $(DISTDIR)/usr/
-linux: INSTALL_MOD_PATH = $(DISTDIR)
-linux: INSTALL_FW_PATH = $(DISTDIR)/lib/firmware
+# Variables that Linux uses for various targets.
+# These are the defaults unless passed in from the outside.
+#
+INSTALL_HDR_PATH ?= $(DISTDIR)/usr/
+INSTALL_MOD_PATH ?= $(DISTDIR)
+INSTALL_FW_PATH ?= $(DISTDIR)/lib/firmware
+
 linux: $(DISTDIR)/boot/vmlinuz
 
+# N.B. tar-pkg doesn't include firmware.
 $(DISTDIR)/boot/vmlinuz: $(O) $(O)/.config $(header_to_taste) $(DISTDIR)/lib/firmware
 	$(M)
 	$(M) tar-pkg

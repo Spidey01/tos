@@ -77,9 +77,9 @@ linux: setup
 	$(MAKE_MODULE_CMD)
 
 linux-firmware_install:
-	$(MAKE) $(MAKEFLAGS) -I mk -f mk/linux.mk $@
+	$(MAKE) -I mk -f mk/linux.mk $@
 linux-headers_install:
-	$(MAKE) $(MAKEFLAGS) -I mk -f mk/linux.mk $@
+	$(MAKE) -I mk -f mk/linux.mk $@
 linux-help:
 	$(MAKE) -I mk -f mk/linux.mk $@
 # Targets to work with the linux configuration.
