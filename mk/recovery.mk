@@ -21,7 +21,7 @@
 include config.mk
 
 R = $(DISTDIR)/recovery
-S = $(CURDIR)/installer
+S = $(CURDIR)/recovery
 
 recovery: $(R)/bin/busybox $(R)/installer.lib $(R)/installer $(R)/gpt-install $(R)/mbr-install recovery.txz
 
