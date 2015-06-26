@@ -11,6 +11,11 @@ say() {
 }
 
 
+warn() {
+    echo "Warning: $*"
+}
+
+
 die() {
     local es opt
 
@@ -35,6 +40,106 @@ die() {
 }
 
 
+# Handles -options for *-install programs.
+# Each handled arg is set to a matching variable.
+# Shift by $? to clip these from your $*.
+#
+set_install_parameters() {
+    local optind
+
+    while true; do
+        case "$1" in
+            -nopartition)
+                nopartition=true
+                ;;
+            -noformat)
+                noformat=true
+                ;;
+            -*)
+                warn "set_install_args(): unknown option: '$1'."
+                ;;
+            *)
+                # found first non-option. Leave rest to the caller.
+                break
+                ;;
+        esac
+        optind=$(($optind + 1))
+        shift
+    done
+    return ${optind:-0}
+}
+
+
+create_boot_partition() {
+    local disk part start end label n
+    disk="$1"
+    part="$2"
+    start="$3"
+    end="$4"
+    label="$5"
+    n="$(get_part_number "$part")"
+
+    [ -b "$disk" ] || die "${disk}: not a block special."
+
+    echo "Creating new boot partition on ${disk}"
+    parted -s "$disk"  mkpart primary fat32 "$start" "$end"
+    [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
+    parted -s "$disk"  set "$n" boot on
+}
+
+
+format_boot_partition() {
+    mkfs.vfat -v "$1"
+}
+
+
+create_recovery_partition() {
+    local disk part start end label n
+    disk="$1"
+    part="$2"
+    start="$3"
+    end="$4"
+    label="$5"
+    n="$(get_part_number "$part")"
+
+    [ -b "$disk" ] || die "${disk}: not a block special."
+
+    echo "Creating new recovery partition on ${disk}."
+    parted -s "$disk"  mkpart primary ext2 "$start" "$end"
+    [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
+    parted -s "$disk"  set 2 diag on
+}
+
+
+format_recovery_partition() {
+    mkfs.ext2 "$1"
+}
+
+
+create_root_partition() {
+    local disk part start end label n
+    disk="$1"
+    part="$2"
+    start="$3"
+    end="$4"
+    label="$5"
+    n="$(get_part_number "$part")"
+
+    [ -b "$disk" ] || die "${disk}: not a block special."
+
+    echo "Creating new / partition on ${disk}."
+    parted -s "$disk"  mkpart primary ext4 "$start" "$end"
+    [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
+    # needed because of errexit and the above test -n.
+    return 0
+}
+
+
+format_root_partition() {
+    mkfs.ext4 "$1"
+}
+
+
 ls_devices() {
     echo
     echo "Available devices: "
@@ -43,6 +148,16 @@ ls_devices() {
     echo
 }
 
+
+ls_partitions() {
+    if [ -n "$1" ]; then
+        say "Displaying partition table of ${1}"
+        parted "$1" print
+    else
+        say "Displaying all partition tables."
+        parted -s --list
+    fi
+}
 
 get_memory() {
     free "$*" | grep Mem: | awk '{print $2}'
@@ -125,4 +240,27 @@ install_efiboot() {
     do_umount "$1" ESP
 }
 
+
+write_syslinux_cfg() {
+    local root recovery file kernel
+
+    root="$1"
+    recovery="$2"
+    file="$3"
+    kernel="${4:-/vmlinuz}"
+    cat << EOF > "$file"
+LABEL TOS
+    LINUX $kernel
+    APPEND rootwait root=${root} rw quiet
+LABEL RECOVERY
+    LINUX /vmlinuz
+    APPEND rootwait root=${recovery} rw quiet
+
+SAY TOS = The Other System from {$root}.
+SAY RECOVERY = Reinstall from recovery partition from ${recovery}.
+DEFAULT TOS
+PROMPT 1
+TIMEOUT 50
+EOF
+}
 

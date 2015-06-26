@@ -44,42 +44,29 @@ echo swap_size=$swap_size recovery_offset=$recovery_offset root_offset=$root_off
 # echo "get_part_number root_device = $(get_part_number $root_device)"
 echo DEBUG, DEBUG, DEBUG
 
-echo "Zeroing start of ${install_device}."
-dd if=/dev/zero "of=$install_device" bs=1M count=10
+if [ -n "$nopartition" ]; then
+    warn "Skipping partitioning $install_device because -nopartition was given."
+else
+    echo "Zeroing start of ${install_device}."
+    dd if=/dev/zero "of=$install_device" bs=1M count=10
 
-echo "Making new partition table on ${install_device}."
-p mktable gpt
+    echo "Making new partition table on ${install_device}."
+    p mktable gpt
 
-echo "Creating new EFI System Partition (ESP) on ${esp_device}."
-p mkpart primary fat32 1 "$recovery_offset"
-p name 1 ESP
-p set 1 boot on
-mkfs.vfat -v "$esp_device"
-
-echo "Creating new Recovery Partition on ${recovery_device}."
-p mkpart primary ext2 "$recovery_offset" "$root_offset" 
-p name 2 recovery
-p set 2 diag on
-mkfs.ext2 "$recovery_device"
-
-
-if [ -n "$swap_device" ]; then
-    echo "Creating new SWAP partition on ${swap_device}."
-    die "Not implemented"
-    # p mkpart primary linux-swap 100M "$swap_size"
-    # p name "$(get_part_number "$swap_device")" SWAP
-    # mkswap "$swap_device"
+    create_boot_partition "$install_device" "$esp_device" 1 "$recovery_offset" ESP
+    create_recovery_partition "$install_device" "$recovery_device" "$recovery_offset" "$root_offset" Recovery
+    create_root_partition "$install_device" "$root_device" "$root_offset" "100%" TOS
 fi
 
+ls_partitions
 
-echo "Creating new / partition on ${root_device}."
-p mkpart primary ext4 ${root_offset} '100%'
-p name 3 TOS
-mkfs.ext4 "$root_device"
-
-
-say "Displaying partition table of ${install_device}"
-parted "$install_device" print
+if [ -n "$noformat" ]; then
+    warn "Skipping formatting partitions because -noformat was given."
+else
+    format_boot_partition "$esp_device"
+    format_recovery_partition "$recovery_device"
+    format_root_partition "$root_device"
+fi
 
 
 say "Installing system files."
@@ -94,20 +81,7 @@ say "Setting up boot loader."
 install_mbr gptmbr "$install_device"
 install_efiboot "$esp_device" "$(uname -m)"
 do_mount "$esp_device" boot
-cat << EOF > syslinux.cfg
-LABEL TOS
-    LINUX /vmlinuz
-    APPEND rootwait root=${root_device} rw quiet
-LABEL RECOVERY
-    LINUX /vmlinuz
-    APPEND rootwait root=${recovery_device} rw quiet
-
-SAY TOS = The Other System from {$root_device}.
-SAY RECOVERY = Reinstall from recovery partition from ${recovery_partition}.
-DEFAULT TOS
-PROMPT 1
-TIMEOUT 50
-EOF
+write_syslinux_cfg "$root_device" "$recovery_device" /mnt/EFI/BOOT/syslinux.cfg
 echo "TODO: aslo load syslinux for mbr boot compat and write syslinux.cfg that sources efi one."
 do_umount "$esp_device" boot
 
