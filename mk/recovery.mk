@@ -22,8 +22,10 @@ include config.mk
 
 R = $(DISTDIR)/recovery
 S = $(CURDIR)/recovery
+syslinux_version := 6.03
 
-recovery: $(R)/bin/busybox $(R)/installer.lib $(R)/installer $(R)/gpt-install $(R)/mbr-install recovery.txz
+recovery: recovery.txz
+	@echo "Recovery tape is ready"
 
 $(R):
 	mkdir -p "$@"
@@ -43,6 +45,14 @@ $(R)/bin/busybox: $(R)
 	$(MAKE) -C linux O=$(OBJDIR)/linux INSTALL_HDR_PATH=$(R)/usr headers_install
 	$(MAKE) "DISTDIR=$(R)" busybox e2fsprogs glibc
 
-recovery.txz:
+# Apparently syslinux shouldn't be compiled from scratch so use a binary release.
+$(R)/syslinux: $(OBJDIR)/syslinux-$(syslinux_version).tar.xz $(R)
+	tar -C $(R) -xJf "$<"
+	mv "$(R)/syslinux-$(syslinux_version)" "$@"
+	
+$(OBJDIR)/syslinux-$(syslinux_version).tar.xz:
+	wget -N -P "$(dir $@)" "https://www.kernel.org/pub/linux/utils/boot/syslinux/$(notdir $@)"
+
+recovery.txz: $(R)/bin/busybox $(R)/syslinux $(R)/installer.lib $(R)/installer $(R)/gpt-install $(R)/mbr-install
 	tar -C "$(R)" -f "$@" -cvJ .
 
