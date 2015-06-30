@@ -171,32 +171,38 @@ get_part_number() {
 
 
 do_mount() {
-    if ! mount "$1" /mnt; then
-        die "Failed mounting $2 device."
+    local m
+    m="${2:-/mnt}"
+
+    if ! mount "$1" $m; then
+        die "Failed mounting ${3:-$1} device on ${m}."
     fi
 }
 
 
 do_umount() {
-    if ! umount /mnt; then
-        die "Failed unmounting $2 device."
+    local m
+    m="${2:-/mnt}"
+    if ! umount $m; then
+        die "Failed unmounting ${3:-$1} device from ${m}."
     fi
 }
 
 
 install_image() {
-    local device image
+    local device image where
 
     device="$1"
     image="$2"
+    where="${3:-/mnt}"
 
-    do_mount "$device" "$image"
+    do_mount "$device" "$where" "$image"
 
     echo "TODO: untar $image image"
-        echo "Pausing so you can extract system files on /mnt."
+        echo "Pausing so you can extract system files on ${where}."
         read -p "Press enter to continue." REPLY
 
-    do_umount "$device" "$image"
+    do_umount "$device" "$where" "$image"
 }
 
 
@@ -225,15 +231,19 @@ install_mbr() {
 
 
 install_efiboot() {
-    local dir
+    local device arch where dir
+
+    device="$1"
+    arch="$2"
+    where="${3:-/mnt}"
 
 
     say "Installing syslinux UEFI boot software"
 
-    do_mount "$1" ESP
-    dir=/mnt/EFI/BOOT
-    mkdir -p $dir
-    case "$2" in
+    do_mount "$device" "$where" ESP
+    dir="${where}/EFI/BOOT"
+    mkdir -p "$dir"
+    case "$arch" in
         x86_64)
             cp -v /syslinux/efi64/efi/syslinux.efi "${dir}/BOOTX64.EFI"
             cp -v /syslinux/efi64/com32/elflink/ldlinux/ldlinux.e64 "${dir}/"
@@ -246,7 +256,7 @@ install_efiboot() {
             echo "unsupported architecture: $2"
             ;;
     esac
-    do_umount "$1" ESP
+    do_umount "$device" "$where" ESP
 }
 
 

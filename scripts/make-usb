@@ -1,0 +1,84 @@
+#!/bin/sh
+set -o errexit
+
+[ -f ./installer.lib ] && LIB=./installer.lib
+[ -f ./recovery/installer.lib ] && LIB=./recovery/installer.lib
+echo "LIB='$LIB'"
+
+. "$LIB"
+if [ $? -ne 0 ]; then
+    echo "fatal error: failed sourcing installer.lib"
+    read -p "Press enter key to exit." REPLY
+    exit 127
+fi
+# parted() {
+    # echo "DEBUG: parted $*"
+# }
+
+usb="$1"
+mnt="$2"
+
+if [ -z "$usb" -o -z "$mnt" ]; then
+    echo usage: "$(basename $0) /dev/USB-DEVICE-FILE /MOUNT/POINT"
+    exit 64 # EX_USAGE
+fi
+say "DEBUG: usb='$usb' mnt='$mnt'"
+
+boot_partition="${usb}1"
+root_partition="${usb}2"
+data_partition="${usb}3"
+
+say "Zeroing ${usb}."
+dd if=/dev/zero "of=$usb" bs=1M count=10
+
+say "Partitioning ${usb}."
+parted -s "$usb" mktable gpt
+
+create_boot_partition "$usb" "$boot_partition" 1 100 boot
+format_boot_partition "$boot_partition"
+install_image "$boot_partition" boot.txz "$mnt"
+install_mbr gptmbr "$usb"
+install_efiboot "$boot_partition" "$(uname -m)" "$mnt"
+do_mount "$boot_partition" "$mnt" boot
+cat << EOF > "${mnt}/EFI/BOOT/syslinux.cfg"
+LABEL INSTALL
+    LINUX /vmlinuz
+    APPEND rootwait root=/dev/sda2 rw quiet
+LABEL RESCUE
+    LINUX /vmlinuz
+    APPEND rootwait root=/dev/sda2 rw quiet init=/bin/sh
+SAY INSTALL = Install The Other System.
+SAY RESCUE  = Live rescue environment.
+SAY Booting INSTALL in 60 seconds.
+SAY Prompting while counting in the background!
+DEFAULT INSTALL
+PROMPT 1
+TIMEOUT 600
+EOF
+cat << EOF > "${mnt}/syslinux.cfg"
+SAY BOOTED IN UEFI-CSM / BIOS MODE
+INCLUDE /EFI/BOOT/syslinux.cfg
+EOF
+do_umount "$boot_partition" "$mnt" boot
+/syslinux/bios/linux/syslinux -i "$boot_partition"
+
+say "Setting up install partition."
+create_recovery_partition "$usb" "$root_partition" 100 400 install
+format_recovery_partition "$root_partition"
+install_image "$root_partition" recovery.txz "$mnt"
+do_mount "$root_partition" "$mnt" install
+cat << EOF > "${mnt}/etc/fstab"
+$boot_partition /boot vfat defaults 0 1
+$root_partition /     ext2 defaults 0 2
+# $data_partition /?    ext4 defaults 0 3
+EOF
+do_umount "$root_partition" "$mnt" install
+
+say "Creating data partition."
+echo "data partition: NOT USED YET."
+# echo parted -a opt -s "$usb" mkpart primary ext4 400 100%
+# echo mkfs.ext4 -L data "$data_partition"
+# echo do_mount "$data_device" data
+# echo cp -v *.txz "${mnt}/"
+# echo do_umount "$data_device" data
+
