@@ -85,6 +85,7 @@ create_boot_partition() {
     parted -s "$disk"  mkpart primary fat32 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
     parted -s "$disk"  set "$n" boot on
+    sync
 }
 
 
@@ -108,6 +109,7 @@ create_recovery_partition() {
     parted -s "$disk"  mkpart primary ext2 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
     parted -s "$disk"  set 2 diag on
+    sync
 }
 
 
@@ -130,8 +132,7 @@ create_root_partition() {
     echo "Creating new / partition on ${disk}."
     parted -s "$disk"  mkpart primary ext4 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
-    # needed because of errexit and the above test -n.
-    return 0
+    sync
 }
 
 
@@ -212,6 +213,14 @@ install_mbr() {
             ;;
     esac
     dd bs=440 count=1 conv=notrunc "if=/syslinux/bios/mbr/${1}.bin" "of=${2}"
+
+    # Make sure that the writes are synced to prevent a race condition.
+    #
+    # It seems that the device files for the partitions can disappear briefly
+    # after writing an MBR. As luck would have it we can end up trying to use
+    # those before the partition shows up in /dev again!
+    #
+    sync
 }
 
 
