@@ -43,7 +43,7 @@ $(R)/mbr-install: $(S)/mbr-install.sh $(R)
 # Not just busybox.
 $(R)/bin/busybox: $(R)
 	$(MAKE) -C linux O=$(OBJDIR)/linux INSTALL_HDR_PATH=$(R)/usr headers_install
-	$(MAKE) "DISTDIR=$(R)" busybox e2fsprogs glibc
+	$(MAKE) "DISTDIR=$(R)" busybox e2fsprogs glibc parted
 
 # Apparently syslinux shouldn't be compiled from scratch so use a binary release.
 $(R)/syslinux: $(OBJDIR)/syslinux-$(syslinux_version).tar.xz $(R)

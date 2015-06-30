@@ -31,6 +31,7 @@ help:
 	@echo "\tlinux-olddefconfig     -- update etc/linux.config."
 	@echo "\tglibc                  -- compile GNU C library."
 	@echo "\te2fsprogs              -- compile e2fsprogs."
+	@echo "\tparted                 -- compile parted."
 	@echo "\tfile                   -- compile file utility."
 	@echo "\tzlib                   -- compile zlib library."
 	@echo
@@ -62,7 +63,7 @@ distclean: clean
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 
 MINIMUM_MODULES = busybox etc linux
-MODULES = $(MINIMUM_MODULES) glibc e2fsprogs zlib file
+MODULES = $(MINIMUM_MODULES) glibc e2fsprogs parted zlib file
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -96,6 +97,8 @@ glibc: setup linux-headers_install
 # TODO:
 # Depends on glibc but we're not able to build against our glibc module yet.
 e2fsprogs: setup
+	$(MAKE_MODULE_CMD)
+parted: setup
 	$(MAKE_MODULE_CMD)
 zlib: setup
 	$(MAKE_MODULE_CMD)
