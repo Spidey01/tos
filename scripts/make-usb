@@ -75,10 +75,9 @@ EOF
 do_umount "$root_partition" "$mnt" install
 
 say "Creating data partition."
-echo "data partition: NOT USED YET."
-# echo parted -a opt -s "$usb" mkpart primary ext4 400 100%
-# echo mkfs.ext4 -L data "$data_partition"
-# echo do_mount "$data_device" data
-# echo cp -v *.txz "${mnt}/"
-# echo do_umount "$data_device" data
+parted -a opt -s "$usb" mkpart primary ext4 400 100%
+mkfs.ext4 -L data "$data_partition"
+do_mount "$data_device" "$mnt" data
+cp -v *.txz "${mnt}/"
+do_umount "$data_device" "$mnt" data
 
