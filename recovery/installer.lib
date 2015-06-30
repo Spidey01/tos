@@ -81,7 +81,7 @@ create_boot_partition() {
 
     [ -b "$disk" ] || die "${disk}: not a block special."
 
-    echo "Creating new boot partition on ${disk}"
+    say "Creating new boot partition on ${disk}"
     parted -s "$disk"  mkpart primary fat32 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
     parted -s "$disk"  set "$n" boot on
@@ -105,7 +105,7 @@ create_recovery_partition() {
 
     [ -b "$disk" ] || die "${disk}: not a block special."
 
-    echo "Creating new recovery partition on ${disk}."
+    say "Creating new recovery partition on ${disk}."
     parted -s "$disk"  mkpart primary ext2 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
     parted -s "$disk"  set 2 diag on
@@ -129,7 +129,7 @@ create_root_partition() {
 
     [ -b "$disk" ] || die "${disk}: not a block special."
 
-    echo "Creating new / partition on ${disk}."
+    say "Creating new / partition on ${disk}."
     parted -s "$disk"  mkpart primary ext4 "$start" "$end"
     [ -n "$label" ] && parted -s "$disk"  name "$n" "$label"
     sync
