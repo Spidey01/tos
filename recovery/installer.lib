@@ -198,9 +198,12 @@ install_image() {
 
     do_mount "$device" "$where" "$image"
 
-    echo "TODO: untar $image image"
-        echo "Pausing so you can extract system files on ${where}."
-        read -p "Press enter to continue." REPLY
+    # echo "TODO: untar $image image"
+    #     echo "Pausing so you can extract system files on ${where}."
+    #     read -p "Press enter to continue." REPLY
+
+    # make sure we use busybox tar because of ownership errors extracting to FAT.
+    busybox tar -C "$where" -xJf "$image"
 
     do_umount "$device" "$where" "$image"
 }
