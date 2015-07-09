@@ -127,4 +127,7 @@ root: root.txz
 root.txz:
 	tar -C dist --exclude ./recovery --exclude ./boot -cJvf "$@" .
 
-.PHONY: clean setup linux-menuconfig $(MODULES)
+usb:
+	$(MAKE_MODULE_CMD)
+
+.PHONY: clean setup linux-menuconfig $(MODULES) usb
