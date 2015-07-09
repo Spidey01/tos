@@ -3,7 +3,6 @@ set -o errexit
 
 [ -f ./installer.lib ] && LIB=./installer.lib
 [ -f ./recovery/installer.lib ] && LIB=./recovery/installer.lib
-echo "LIB='$LIB'"
 
 . "$LIB"
 if [ $? -ne 0 ]; then
