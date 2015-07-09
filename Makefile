@@ -112,9 +112,6 @@ minimum: $(MINIMUM_MODULES)
 complete: $(MODULES)
 	@echo "Complete TOS build completed."
 
-installer: setup $(MODULES)
-	$(MAKE_MODULE_CMD)
-
 boot: linux
 	$(MAKE_MODULE_CMD)
 
