@@ -17,7 +17,12 @@
 help:
 	@echo "Available targets:"
 	@echo
-	@echo "Module:"
+	@echo "\tCleaning targets:"
+	@echo
+	@echo "\tclean      -- clean all the things."
+	@echo "\tdistclean  -- even more clean."
+	@echo
+	@echo "Module targets:"
 	@echo
 	@echo "\tbusybox                -- compile busybox."
 	@echo "\tbusybox-menuconfig     -- edit etc/busybox.config."
@@ -42,8 +47,6 @@ help:
 	@echo "\troot       -- tape root image."
 	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- make $(MODULES)."
-	@echo "\tclean      -- clean all the things."
-	@echo "\tdistclean  -- even more clean."
 	@echo
 
 setup:
