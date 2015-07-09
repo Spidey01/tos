@@ -48,6 +48,8 @@ help:
 	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- make $(MODULES)."
 	@echo
+	@echo "Note that make root does not imply make complete or make minimum."
+	@echo
 
 setup:
 	-clear
