@@ -71,9 +71,9 @@ fi
 
 say "Installing system files."
 
-install_image "$root_device" root
-install_image "$recovery_device" recovery
-install_image "$esp_device" boot
+install_image "$root_device" /images/root.txz
+install_image "$recovery_device" /images/recovery.txz
+install_image "$esp_device" /images/boot.txz
 
 
 say "Setting up boot loader."

@@ -17,7 +17,12 @@
 help:
 	@echo "Available targets:"
 	@echo
-	@echo "Module:"
+	@echo "\tCleaning targets:"
+	@echo
+	@echo "\tclean      -- clean all the things."
+	@echo "\tdistclean  -- even more clean."
+	@echo
+	@echo "Module targets:"
 	@echo
 	@echo "\tbusybox                -- compile busybox."
 	@echo "\tbusybox-menuconfig     -- edit etc/busybox.config."
@@ -42,8 +47,8 @@ help:
 	@echo "\troot       -- tape root image."
 	@echo "\tminimum    -- make $(MINIMUM_MODULES)."
 	@echo "\tcomplete   -- make $(MODULES)."
-	@echo "\tclean      -- clean all the things."
-	@echo "\tdistclean  -- even more clean."
+	@echo
+	@echo "Note that make root does not imply make complete or make minimum."
 	@echo
 
 setup:
@@ -112,9 +117,6 @@ minimum: $(MINIMUM_MODULES)
 complete: $(MODULES)
 	@echo "Complete TOS build completed."
 
-installer: setup $(MODULES)
-	$(MAKE_MODULE_CMD)
-
 boot: linux
 	$(MAKE_MODULE_CMD)
 
@@ -125,4 +127,7 @@ root: root.txz
 root.txz:
 	tar -C dist --exclude ./recovery --exclude ./boot -cJvf "$@" .
 
-.PHONY: clean setup linux-menuconfig $(MODULES)
+usb:
+	$(MAKE_MODULE_CMD)
+
+.PHONY: clean setup linux-menuconfig $(MODULES) usb

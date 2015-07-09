@@ -23,11 +23,12 @@ include config.mk
 R = $(DISTDIR)/recovery
 S = $(CURDIR)/recovery
 syslinux_version := 6.03
+recovery_dirs = $(foreach D,dev mnt boot images,$(R)/$(D))
 
 recovery: recovery.txz
 	@echo "Recovery tape is ready"
 
-$(R):
+$(R) $(recovery_dirs):
 	mkdir -p "$@"
 
 $(R)/installer.lib: $(S)/installer.lib $(R)
@@ -53,6 +54,6 @@ $(R)/syslinux: $(OBJDIR)/syslinux-$(syslinux_version).tar.xz $(R)
 $(OBJDIR)/syslinux-$(syslinux_version).tar.xz:
 	wget -N -P "$(dir $@)" "https://www.kernel.org/pub/linux/utils/boot/syslinux/$(notdir $@)"
 
-recovery.txz: $(R)/bin/busybox $(R)/syslinux $(R)/installer.lib $(R)/installer $(R)/gpt-install $(R)/mbr-install
+recovery.txz: $(R) $(recovery_dirs) $(R)/bin/busybox $(R)/syslinux $(R)/installer.lib $(R)/installer $(R)/gpt-install $(R)/mbr-install
 	tar -C "$(R)" -f "$@" -cvJ .
 

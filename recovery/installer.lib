@@ -114,7 +114,7 @@ create_recovery_partition() {
 
 
 format_recovery_partition() {
-    mkfs.ext2 "$1"
+    mkfs.ext2 -F "$1"
 }
 
 
@@ -170,6 +170,11 @@ get_part_number() {
 }
 
 
+get_uuid() { # Busybox blkid doesn't have fancy things so use sed for formatting.
+    blkid "$1" | sed -e 's/.*\s\(UUID="[-a-zA-Z0-9]*"\)\s.*/\1/g' -e 's/"//g'
+}
+
+
 do_mount() {
     local m
     m="${2:-/mnt}"
@@ -195,6 +200,8 @@ install_image() {
     device="$1"
     image="$2"
     where="${3:-/mnt}"
+
+    say "Installing image $image onto $device mounted at ${where}."
 
     do_mount "$device" "$where" "$image"
 
