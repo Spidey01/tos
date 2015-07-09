@@ -62,6 +62,7 @@ linux-menuconfig: $(O)/.config
 	cp -v -- "$<" $(LINUX_CONFIG)
 
 linux-olddefconfig: $(O)/.config
+	$(M) olddefconfig
 	cp -v -- "$<" $(LINUX_CONFIG)
 
 
