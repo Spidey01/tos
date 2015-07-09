@@ -59,9 +59,9 @@ fi
 
 say "Installing system files."
 
-install_image "$root_device" root
-install_image "$recovery_device" recovery
-install_image "$boot_device" boot
+install_image "$root_device" /images/root.txz
+install_image "$recovery_device" /images/recovery.txz
+install_image "$boot_device" /images/boot.txz
 
 say "Setting up boot loader."
 
@@ -69,12 +69,12 @@ install_mbr mbr "$install_device"
 
 # /syslinux/bios/linux/syslinux -d /boot/syslinux -i "$boot_device"
 /syslinux/bios/linux/syslinux -i "$boot_device"
-do_mount "$boot_device" boot
+do_mount "$boot_device" /mnt boot
 write_syslinux_cfg "$root_device" "$recovery_device" /mnt/syslinux.cfg
-do_umount "$boot_device" boot
+do_umount "$boot_device" /mnt boot
 
 
-do_mount "$root_device" root
+do_mount "$root_device" /mnt root
 say "Writing /etc/fstab to root partition."
 cat << EOF > /mnt/etc/fstab
 # Boot partition
@@ -85,4 +85,4 @@ $recovery_device /recovery ext2 defaults 0 2
 $root_device / ext4 defaults 0 3
 EOF
 cat $fstab
-do_umount "$root_device" root
+do_umount "$root_device" /mnt root

@@ -1,4 +1,4 @@
-#!../dist/bin/busybox sh
+#!/bin/busybox sh
 
 # debug
 E() {
@@ -135,7 +135,10 @@ sleep 30
 
 script -c '$install_tool "$install_device" "$want_swap"' /recovery.log
 
+echo DEBUG
+read -p "Press enter to exit."
 EOF
+# TODO: run this instead of exec and then move to finished recovery partition on target.
 chmod +x /recovery
 exec /recovery
 

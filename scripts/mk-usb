@@ -1,0 +1,96 @@
+#!/bin/sh
+set -o errexit
+
+[ -f ./installer.lib ] && LIB=./installer.lib
+[ -f ./recovery/installer.lib ] && LIB=./recovery/installer.lib
+echo "LIB='$LIB'"
+
+. "$LIB"
+if [ $? -ne 0 ]; then
+    echo "fatal error: failed sourcing installer.lib"
+    read -p "Press enter key to exit." REPLY
+    exit 127
+fi
+# parted() {
+    # echo "DEBUG: parted $*"
+# }
+
+usb="$1"
+mnt="$2"
+
+if [ -z "$usb" -o -z "$mnt" ]; then
+    echo usage: "$(basename $0) /dev/USB-DEVICE-FILE /MOUNT/POINT"
+    exit 64 # EX_USAGE
+fi
+say "DEBUG: usb='$usb' mnt='$mnt'"
+
+boot_partition="${usb}1"
+root_partition="${usb}2"
+image_partition="${usb}3"
+
+say "Zeroing ${usb}."
+dd if=/dev/zero "of=$usb" bs=1M count=10
+
+# XXX:
+#
+# BIOS won't boot from gpt+gptmbr or gpt+mbr; must be msdos+mbr.
+#
+# Will UEFI boot from msdos+mbr or does it have to be gpt+gptmbr to use
+# theloader on the ESP instead of the CSM?
+
+say "Partitioning ${usb}."
+parted -s "$usb" mktable msdos
+
+create_boot_partition "$usb" "$boot_partition" 1 100 #boot
+format_boot_partition "$boot_partition"
+install_image "$boot_partition" boot.txz "$mnt"
+install_mbr mbr "$usb"
+install_efiboot "$boot_partition" "$(uname -m)" "$mnt"
+do_mount "$boot_partition" "$mnt" boot
+syslinux_cfg="${mnt}/EFI/BOOT/syslinux.cfg"
+echo "SAY Please enter a boot devce." > "$syslinux_cfg"
+for maybe in sda sdb sdc sdd sde sdf sdg 
+do
+    cat << EOF >> "$syslinux_cfg"
+LABEL ${maybe}
+    LINUX /vmlinuz
+    APPEND rootwait root=/dev/${maybe}2 rw quiet
+EOF
+done
+cat << EOF >> "$syslinux_cfg"
+SAY Booting sdb in 60 seconds.
+SAY Prompting while counting in the background!
+DEFAULT sdb
+PROMPT 1
+TIMEOUT 600
+EOF
+
+cat << EOF > "${mnt}/syslinux.cfg"
+SAY BOOTED IN UEFI-CSM / BIOS MODE
+INCLUDE /EFI/BOOT/syslinux.cfg
+EOF
+do_umount "$boot_partition" "$mnt" boot
+/syslinux/bios/linux/syslinux -i "$boot_partition"
+
+say "Setting up install partition."
+create_recovery_partition "$usb" "$root_partition" 100 400 #install
+format_recovery_partition "$root_partition"
+install_image "$root_partition" recovery.txz "$mnt"
+
+say "Creating image partition."
+parted -a opt -s "$usb" mkpart primary ext4 400 100%
+sync
+mkfs.ext2 -F -L images "$image_partition"
+do_mount "$image_partition" "$mnt" data
+cp -v *.txz "${mnt}/"
+do_umount "$image_partition" "$mnt" data
+
+say "Writing out the fstab."
+do_mount "$root_partition" "$mnt"
+cat << EOF > "${mnt}/etc/fstab"
+$(get_uuid $boot_partition) /boot           vfat defaults 0 1
+$(get_uuid $root_partition) /               ext2 defaults 0 2
+$(get_uuid $image_partition) /images         ext4 defaults 0 3
+EOF
+do_umount "$root_partition" "$mnt"
+

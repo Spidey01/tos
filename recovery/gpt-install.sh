@@ -71,22 +71,22 @@ fi
 
 say "Installing system files."
 
-install_image "$root_device" root
-install_image "$recovery_device" recovery
-install_image "$esp_device" boot
+install_image "$root_device" /images/root.txz
+install_image "$recovery_device" /images/recovery.txz
+install_image "$esp_device" /images/boot.txz
 
 
 say "Setting up boot loader."
 
 install_mbr gptmbr "$install_device"
 install_efiboot "$esp_device" "$(uname -m)"
-do_mount "$esp_device" boot
+do_mount "$esp_device" /mnt boot
 write_syslinux_cfg "$root_device" "$recovery_device" /mnt/EFI/BOOT/syslinux.cfg
 echo "TODO: aslo load syslinux for mbr boot compat and write syslinux.cfg that sources efi one."
-do_umount "$esp_device" boot
+do_umount "$esp_device" /mnt boot
 
 
-do_mount "$root_device" root
+do_mount "$root_device" /mnt root
 say "Writing /etc/fstab to root partition."
 cat << EOF > /mnt/etc/fstab
 # (U)EFI System Partition (ESP)
@@ -97,6 +97,6 @@ $recovery_device /recovery ext2 defaults 0 2
 $root_device / ext4 defaults 0 3
 EOF
 cat $fstab
-do_umount "$root_device" root
+do_umount "$root_device" /mnt root
 
 echo "ALL DONE"
