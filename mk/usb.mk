@@ -21,6 +21,7 @@ help:
 	$(warning You must do make complete or make minimum before using this makefile.)
 
 usb: usb-setup boot.txz recovery.txz root.txz
+	sudo $(CURDIR)/scripts/mk-usb "$(DEVICE)" "$(MNT)"
 
 usb-setup:
 ifndef DEVICE
@@ -29,7 +30,6 @@ endif
 ifndef MNT
 	$(error Must call make with MNT set to the mount place for build.)
 endif
-	sudo $(CURDIR)/scripts/mk-usb "$(DEVICE)" "$(MNT)"
 
 boot.txz recovery.txz root.txz:
 	$(MAKE) $(basename $@)
