@@ -1,14 +1,5 @@
 #!/bin/busybox sh
 
-# debug
-E() {
-    printf "\texec: %s\n" "$*"
-}
-EE() {
-    printf "\texec: %s\n" "$*"
-    command $*
-}
-
 . ./installer.lib
 if [ $? -ne 0 ]; then
     echo "fatal error: failed sourcing installer.lib"
@@ -29,10 +20,10 @@ if [ "$(id -u)" -ne 0 ]; then
         "##############################"
 fi
 
-[ -d /proc ] || mkdir /proc
-E mount -t proc  none /proc
-[ -d /sys ] || mkdir /sys
-E mount -t sysfs none /sys
+if [ ! -d /proc -o ! -d /sys ]; then
+    [ -f /etc/inittab ] || echo "/etc/inittab missing. Is install media bad?"
+    die "Both /proc and /sys must be mounted first."
+fi
 
 say "We need a device to install to. First let's see what your computer has."
 ls_devices
@@ -44,7 +35,7 @@ do
     [ ! -b "$install_device" ] \
         && echo "$install_device is not a block device" \
         && continue
-    EE parted "$install_device" print
+    parted "$install_device" print
 done
 
 say "OK, which should we install to?"
