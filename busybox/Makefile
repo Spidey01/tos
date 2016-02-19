@@ -40,7 +40,7 @@ extract_tgz_source = $(call extract_source, -z, $1)
 extract_tbz2_source = $(call extract_source, -j, $1)
 
 
-busybox: busybox-download busybox-extract busybox-configure busybox-build
+busybox: busybox-download busybox-extract busybox-configure busybox-build busybox=install
 
 busybox-download: $(BUSYBOX_ARCHIVE)
 $(BUSYBOX_ARCHIVE):
@@ -53,7 +53,11 @@ $(BUSYBOX_SOURCE): $(BUSYBOX_ARCHIVE)
 busybox-configure: $(O)/.config
 
 DISTDIR = $(CURDIR)/dist
+
 busybox-build:
+	$(MAKE) -C $(BUSYBOX_SOURCE) "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" 
+
+busybox-install:
 	$(MAKE) -C $(BUSYBOX_SOURCE) "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" install
 
 $(O):
