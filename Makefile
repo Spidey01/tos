@@ -71,6 +71,7 @@ MINIMUM_MODULES = busybox etc linux
 MODULES = $(MINIMUM_MODULES) glibc e2fsprogs parted zlib file
 
 include $(CURDIR)/mk/config.mk
+include $(CURDIR)/mk/download.mk
 include $(CURDIR)/mk/extract.mk
 include $(CURDIR)/busybox/Makefile
 
