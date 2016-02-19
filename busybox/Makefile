@@ -21,7 +21,7 @@ BUSYBOX_URL := https://busybox.net/downloads/$(notdir $(BUSYBOX_ARCHIVE))
 BUSYBOX_CONFIG := etc/busybox.config
 O := $(OBJDIR)/busybox
 
-busybox: busybox-download busybox-extract busybox-configure busybox-build busybox=install
+busybox: busybox-download busybox-extract busybox-configure busybox-build busybox-install
 
 busybox-download: $(BUSYBOX_ARCHIVE)
 $(BUSYBOX_ARCHIVE):
