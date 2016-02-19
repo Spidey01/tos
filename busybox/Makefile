@@ -29,17 +29,6 @@ define download_source
 	wget -o $1.wget.log -O $1  $2
 endef
 
-# format, input
-define extract_source
-	tar -x $1 -f $2 -C $(dir $2)
-endef
-#	@echo mv -v $(notdir $2) $(basename $(basename $2)))
-# input
-extract_txz_source = $(call extract_source, -J, $1)
-extract_tgz_source = $(call extract_source, -z, $1)
-extract_tbz2_source = $(call extract_source, -j, $1)
-
-
 busybox: busybox-download busybox-extract busybox-configure busybox-build busybox=install
 
 busybox-download: $(BUSYBOX_ARCHIVE)
