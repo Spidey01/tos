@@ -19,8 +19,7 @@ BUSYBOX_ARCHIVE := busybox/busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_SOURCE := $(basename $(basename $(BUSYBOX_ARCHIVE)))
 BUSYBOX_URL := https://busybox.net/downloads/$(notdir $(BUSYBOX_ARCHIVE))
 BUSYBOX_CONFIG := etc/busybox.config
-
-O := $(CURDIR)/tmp/busybox
+O := $(OBJDIR)/busybox
 
 busybox: busybox-download busybox-extract busybox-configure busybox-build busybox=install
 
@@ -33,8 +32,6 @@ $(BUSYBOX_SOURCE): $(BUSYBOX_ARCHIVE)
 	$(call extract_tbz2_source,$<)
 
 busybox-configure: $(O)/.config
-
-DISTDIR = $(CURDIR)/dist
 
 busybox-build:
 	$(MAKE) -C $(BUSYBOX_SOURCE) "O=$(O)" "CONFIG_PREFIX=$(DISTDIR)" 
