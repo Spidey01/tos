@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-# wget -o source.log -O source.tar.bz2 "https://busybox.net/downloads/busybox-1.23.2.tar.bz2"
-
 BUSYBOX_VERSION := 1.23.2
 BUSYBOX_ARCHIVE := busybox/busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_SOURCE := $(basename $(basename $(BUSYBOX_ARCHIVE)))
@@ -23,11 +21,6 @@ BUSYBOX_URL := https://busybox.net/downloads/$(notdir $(BUSYBOX_ARCHIVE))
 BUSYBOX_CONFIG := etc/busybox.config
 
 O := $(CURDIR)/tmp/busybox
-
-# Destination, URL.
-define download_source
-	wget -o $1.wget.log -O $1  $2
-endef
 
 busybox: busybox-download busybox-extract busybox-configure busybox-build busybox=install
 
