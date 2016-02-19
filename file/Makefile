@@ -20,21 +20,6 @@ FILE_SOURCE := $(basename $(basename $(FILE_ARCHIVE)))
 FILE_URL := ftp://ftp.astron.com/pub/file/$(notdir $(FILE_ARCHIVE))
 O := $(OBJDIR)/file
 
-#####################
-
-# We need to autoreconf the source so may as well clean up the git after a build.
-# file: $(O) $(O)/Makefile
-	# $(MAKE) -C $(O) 
-	# $(MAKE) -C $(O) DESTDIR=$(DISTDIR) install
-	# @printf "\nDoing git clean -f in $@ to clean up autoconf stuff.\n"
-	# cd "$@" && git clean -f
-	# rm -rf "$@/autom4te.cache"
-
-# file/configure: file/configure.ac $(O)
-	# autoreconf -f -i file
-
-####################################
-
 file: file-download file-extract file-configure file-build file-install
 
 file-download: $(FILE_ARCHIVE)
