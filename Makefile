@@ -70,10 +70,12 @@ MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
 MINIMUM_MODULES = busybox etc linux
 MODULES = $(MINIMUM_MODULES) glibc e2fsprogs parted zlib file
 
-include $(CURDIR)/mk/config.mk
-include $(CURDIR)/mk/download.mk
-include $(CURDIR)/mk/extract.mk
-include $(CURDIR)/busybox/Makefile
+$(foreach MK,\
+	config download extract \
+		,$(eval include $(CURDIR)/mk/$(MK).mk))
+$(foreach MK,\
+	busybox \
+		,$(eval include $(CURDIR)/$(MK)/Makefile))
 
 etc: setup
 	$(MAKE_MODULE_CMD)
