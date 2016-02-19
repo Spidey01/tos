@@ -7,6 +7,3 @@
 [submodule "e2fsprogs"]
 	path = e2fsprogs
 	url = git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
-[submodule "parted"]
-	path = parted
-	url = git://git.savannah.gnu.org/parted.git
