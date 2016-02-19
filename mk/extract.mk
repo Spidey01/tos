@@ -17,9 +17,9 @@
 
 # format, input
 define extract_source
-	tar -x $1 -f $2 -C $(dir $2)
+	[ -d $(basename $2) -o -d $(basename $(basename $2)) ] || tar -x $1 -f $2 -C $(dir $2)
 endef
-#	@echo mv -v $(notdir $2) $(basename $(basename $2)))
+
 # input
 extract_txz_source = $(call extract_source, -J, $1)
 extract_tgz_source = $(call extract_source, -z, $1)
