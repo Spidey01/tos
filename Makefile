@@ -76,6 +76,7 @@ $(foreach MK,\
 $(foreach MK,\
 	busybox \
 	zlib \
+	file \
 		,$(eval include $(CURDIR)/$(MK)/Makefile))
 
 etc: setup
@@ -104,9 +105,6 @@ glibc: setup linux-headers_install
 e2fsprogs: setup
 	$(MAKE_MODULE_CMD)
 parted: setup
-	$(MAKE_MODULE_CMD)
-# also depends on zlib but we can't build against our glibc & zlib yet.
-file: setup
 	$(MAKE_MODULE_CMD)
 
 minimum: $(MINIMUM_MODULES)
