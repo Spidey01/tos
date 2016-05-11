@@ -70,7 +70,7 @@ MAKE_BOARD_CMD = script -c "$(MAKE) -I mk -f $@/Makefile $@" "tmp/$@.typescript"
 
 MINIMUM_MODULES = busybox etc linux
 MODULES = $(MINIMUM_MODULES) glibc e2fsprogs parted zlib file
-BOARDS := uefi 
+BOARDS := uefi raspberry_pi
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
