@@ -66,9 +66,11 @@ distclean: clean
 
 
 MAKE_MODULE_CMD = script -c "$(MAKE) -I mk -f mk/$@.mk $@" tmp/$@.typescript
+MAKE_BOARD_CMD = script -c "$(MAKE) -I mk -f $@/Makefile $@" "tmp/$@.typescript"
 
 MINIMUM_MODULES = busybox etc linux
 MODULES = $(MINIMUM_MODULES) glibc e2fsprogs parted zlib file
+BOARDS := uefi 
 
 busybox: setup
 	$(MAKE_MODULE_CMD)
@@ -130,4 +132,8 @@ root.txz:
 usb:
 	$(MAKE_MODULE_CMD)
 
-.PHONY: clean setup linux-menuconfig $(MODULES) usb
+.PHONY: clean setup linux-menuconfig $(MODULES) usb $(BOARDS)
+
+$(BOARDS): setup
+	$(MAKE_BOARD_CMD)
+
