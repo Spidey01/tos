@@ -22,6 +22,11 @@ help:
 	@echo "\tclean      -- clean all the things."
 	@echo "\tdistclean  -- even more clean."
 	@echo
+	@echo "Board Support targets"
+	@echo
+	@echo "\tuefi           -- Prepare BSP for UEFI based PCs."
+	@echo "\traspberry_pi   -- Prepare BSP for Raspberry Pi SBCs."
+	@echo
 	@echo "Module targets:"
 	@echo
 	@echo "\tbusybox                -- compile busybox."
